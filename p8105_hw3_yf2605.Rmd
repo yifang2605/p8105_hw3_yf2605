@@ -64,7 +64,7 @@ instacart %>%
   summarize(n_items = n()) %>% 
   filter(n_items > 10000) %>% 
   mutate(aisle = forcats::fct_reorder(aisle, n_items)) %>% 
-  ggplot(aes(aisle, y = n_items)) +
+  ggplot(aes(x = aisle, y = n_items)) +
   geom_col() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
@@ -118,20 +118,54 @@ accel =
   ) %>% 
   mutate(
     weekend = as.factor(if_else(day %in% c('Saturday', 'Sunday'), 1, 0)),
-    day = as.factor(day),
+    day = factor(day, levels=c('Sunday', 'Monday', 'Tuesday', 'Wednesday', 
+                               'Thursday', 'Friday', 'Saturday')),
     activity_counts = as.integer(activity_counts)
     )
 ```
 
 ## Description
 
-The accel dataset contains `r ncol(accel)` variables and `r nrow(accel)` records.
+The accel data set contains `r ncol(accel)` variables and `r nrow(accel)` records.
 
 The variables include:
 `r colnames(accel)`
 
-Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
-Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
+## Questions
+
+*Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
+
+* calculate total activity counts for each day
+* make a table
+
+```{r}
+total_activity = 
+  accel %>% 
+  group_by(week, day) %>% 
+  summarize(
+    total_activity = sum(activity_counts)
+  )
+
+total_activity %>% 
+  knitr::kable()
+```
+
+* bar plot show the total activity counts by day
+
+```{r}
+total_activity %>% 
+  ggplot(aes(x = day, y = total_activity)) +
+  geom_col() +
+  scale_y_continuous(labels = scales::comma) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  facet_grid(. ~ week)
+```
+
+No appearant trend.
+
+* Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
+
+
 
 # Problem 3
 
