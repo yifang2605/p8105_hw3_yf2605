@@ -36,7 +36,7 @@ data("instacart")
 The Instacart dataset contains `r ncol(instacart)` variables and `r nrow(instacart)` records.
 
 The variables include:
-`r colnames(instacart)`
+* `r colnames(instacart)`
 
 ## Questions:
 
@@ -114,7 +114,7 @@ instacart %>%
 * convert variables: activity_1-activity_1440 into longer version
 * add factor variable: weekend, 1 for weekend, 0 for weekday
 * convert variable: day as factor variable
-* convert variables: minute_from_midnight, activity_counts as integer
+* convert variables: minute_from_midnight as integer
 
 ```{r}
 accel = 
@@ -131,7 +131,6 @@ accel =
     day = factor(day, levels=c('Sunday', 'Monday', 'Tuesday', 'Wednesday', 
                                'Thursday', 'Friday', 'Saturday')),
     minute_from_midnight = as.integer(minute_from_midnight),
-    activity_counts = as.integer(activity_counts)
     )
 ```
 
@@ -140,7 +139,8 @@ accel =
 The accel data set contains `r ncol(accel)` variables and `r nrow(accel)` records.
 
 The variables include:
-`r colnames(accel)`
+
+* `r colnames(accel)`
 
 ## Questions
 
@@ -158,10 +158,16 @@ total_activity =
   )
 
 total_activity %>% 
-  knitr::kable()
+  pivot_wider(
+    names_from = day,
+    values_from = total_activity
+  ) %>% 
+  knitr::kable(digits = 2)
 ```
 
-No appearant trend.
+Trends:
+
+No apparent trends.
 
 * Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
 
@@ -189,19 +195,39 @@ conclusions:
 
 * Most activities are carried out between 8:00 to 23:00. 
 
-* There is one peak of activity on Sunday and one on Friday. 
+* There is one peak of activity on Sundays and one on Fridays. 
 
-* On Sundays the activity peak is between 10-11 and on Fridays it is between 20-22.
+* On Sundays the activity peak is between 10:00-11:00 and on Fridays it is between 20:00-22:00.
 
 # Problem 3
 
-This problem uses the NY NOAA data. DO NOT include this dataset in your local data directory; instead, load the data from the p8105.datasets package using:
+## Load data
 
 ```{r}
 data("ny_noaa")
 ```
 
+## Description
 The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
+
+The accel data set contains `r ncol(ny_noaa)` variables and `r nrow(ny_noaa)` records.
+
+The variables include:
+
+* `r colnames(ny_noaa)`
+
+Missing data:
+
+* `r round(100 * sum(is.na(ny_noaa$prcp))/nrow(ny_noaa),2)` % of prcp is missing.
+* `r round(100 * sum(is.na(ny_noaa$snow))/nrow(ny_noaa),2)` % of snow is missing.
+* `r round(100 * sum(is.na(ny_noaa$snwd))/nrow(ny_noaa),2)` % of snwd is missing.
+* `r round(100 * sum(is.na(ny_noaa$tmax))/nrow(ny_noaa),2)` % of tmax is missing.
+* `r round(100 * sum(is.na(ny_noaa$tmin))/nrow(ny_noaa),2)` % of tmin is missing.
+
+
+```{r}
+
+```
 
 Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
 Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
